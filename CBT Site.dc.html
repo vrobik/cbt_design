@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/tokens/colors.css">
+<link rel="stylesheet" href="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/tokens/typography.css">
+<link rel="stylesheet" href="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/tokens/effects.css">
+<link rel="stylesheet" href="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/styles.css">
+<script src="_ds/cbt-design-system-f1933800-0968-4885-901d-6f569f194673/_ds_bundle.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-text);color:var(--cbt-gri-90);background:var(--cbt-alb)}
+  a{color:var(--cbt-albastru)}
+  a:hover{color:var(--cbt-albastru-inchis)}
+</style>
+</helmet>
+
+<!-- ============ NAV ============ -->
+<div style="position:sticky;top:0;z-index:20;background:var(--cbt-alb);border-bottom:1px solid var(--cbt-gri-10)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:clamp(12px,3vw,16px) clamp(16px,4vw,32px);max-width:1140px;margin:0 auto">
+    <a href="#" onClick="{{ goAcasa }}" style="display:flex;flex:none"><img src="assets/logo-color.png" alt="CBT — Comunitatea Basarabenilor din Timișoara" style="height:36px;width:auto;display:block"></a>
+    <ul style="display:{{ desktopNavDisplay }};gap:24px;margin:0;padding:0;list-style:none">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <li style="position:relative;list-style:none">
+          <a href="#" onClick="{{ item.onClick }}" style="text-decoration:none;font-size:var(--fs-small);color:{{ item.color }};font-weight:{{ item.weight }}">{{ item.label }}</a>
+          <span style="position:absolute;bottom:-6px;left:0;width:10px;height:3px;background:var(--cbt-galben);display:{{ item.marker }}"></span>
+        </li>
+      </sc-for>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;flex:none">
+      <div style="display:inline-flex;border:1.5px solid var(--cbt-gri-30);border-radius:var(--radius-pill);overflow:hidden">
+        <button onClick="{{ setRo }}" style="border:0;padding:6px 13px;cursor:pointer;font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;background:{{ roBg }};color:{{ roColor }}">RO</button>
+        <button onClick="{{ setRu }}" style="border:0;padding:6px 13px;cursor:pointer;font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;background:{{ ruBg }};color:{{ ruColor }}">RU</button>
+      </div>
+      <div style="display:{{ desktopCtaDisplay }}">
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="sm" onClick="{{ goContact }}" hint-size="auto,40px">Înscrie-te</x-import>
+      </div>
+      <button aria-label="Meniu" onClick="{{ toggleMenu }}" style="display:{{ hamburgerDisplay }};flex-direction:column;align-items:center;justify-content:center;gap:4px;width:44px;height:44px;border:1.5px solid var(--cbt-gri-30);border-radius:var(--radius-sm);background:var(--cbt-alb);cursor:pointer;padding:0">
+        <span style="width:18px;height:2px;background:var(--cbt-negru);display:block"></span>
+        <span style="width:18px;height:2px;background:var(--cbt-negru);display:block"></span>
+        <span style="width:18px;height:2px;background:var(--cbt-negru);display:block"></span>
+      </button>
+    </div>
+  </nav>
+  <div style="display:{{ mobilePanelDisplay }};padding:4px clamp(16px,4vw,32px) 16px">
+    <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+      <a href="#" onClick="{{ item.onClick }}" style="display:block;text-decoration:none;font-size:var(--fs-body);color:{{ item.color }};font-weight:{{ item.weight }};padding:13px 0;border-bottom:1px solid var(--cbt-gri-10)">{{ item.label }}</a>
+    </sc-for>
+    <div style="margin-top:16px">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="md" onClick="{{ goContact }}" dc-props="{{ fullWidthBtn }}" hint-size="100%,48px">Înscrie-te în comunitate</x-import>
+    </div>
+  </div>
+</div>
+
+<sc-if value="{{ showRuNote }}" hint-placeholder-val="{{ false }}">
+  <div style="background:var(--cbt-albastru-10);color:var(--cbt-gri-90);font-size:var(--fs-small);text-align:center;padding:10px 32px;border-bottom:1px solid var(--cbt-gri-10)">Версия на русском языке готовится. Пока содержание отображается на румынском. · Versiunea în limba rusă este în pregătire.</div>
+</sc-if>
+
+<!-- ============ ACASĂ ============ -->
+<sc-if value="{{ isAcasa }}" hint-placeholder-val="{{ true }}">
+<div>
+  <!-- Hero -->
+  <section style="background:var(--cbt-negru);color:var(--cbt-alb);padding:clamp(56px,10vw,96px) clamp(20px,5vw,32px);position:relative;overflow:hidden">
+    <div style="max-width:1140px;margin:0 auto;position:relative;z-index:2">
+      <div style="display:flex;gap:5px;margin-bottom:24px">
+        <span style="width:16px;height:16px;background:var(--cbt-albastru)"></span>
+        <span style="width:16px;height:16px;background:var(--cbt-galben)"></span>
+        <span style="width:16px;height:16px;background:var(--cbt-rosu)"></span>
+      </div>
+      <h1 style="font-size:var(--fs-display);font-weight:900;letter-spacing:-0.03em;line-height:1.08;max-width:16ch;margin:0">Acasă, la 700 km de casă.</h1>
+      <p style="color:var(--cbt-gri-30);margin-top:16px;max-width:52ch;font-size:var(--fs-body-lg);line-height:1.6">Comunitatea Basarabenilor din Timișoara adună oamenii veniți din Republica Moldova — pentru evenimente, sprijin și prietenii care țin.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:32px">
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="lg" onClick="{{ goContact }}" hint-size="auto,56px">Înscrie-te în comunitate</x-import>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="lg" variant="secondary" onClick="{{ goContact }}" dc-props="{{ heroSecProps }}" hint-size="auto,56px">Scrie-ne</x-import>
+      </div>
+    </div>
+    <div aria-hidden="true" style="position:absolute;right:-20px;top:50%;transform:translateY(-50%);display:{{ heroMosaicDisplay }};grid-template-columns:repeat(6,26px);gap:5px;opacity:.9">
+      <span style="width:26px;height:26px;background:var(--cbt-albastru)"></span><span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-galben)"></span><span style="width:26px;height:26px;background:var(--cbt-galben)"></span><span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-rosu)"></span>
+      <span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-albastru)"></span><span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-galben)"></span><span style="width:26px;height:26px;background:var(--cbt-rosu)"></span><span style="width:26px;height:26px;background:transparent"></span>
+      <span style="width:26px;height:26px;background:var(--cbt-albastru)"></span><span style="width:26px;height:26px;background:var(--cbt-albastru)"></span><span style="width:26px;height:26px;background:var(--cbt-galben)"></span><span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-rosu)"></span><span style="width:26px;height:26px;background:var(--cbt-rosu)"></span>
+      <span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-albastru)"></span><span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-rosu)"></span><span style="width:26px;height:26px;background:transparent"></span><span style="width:26px;height:26px;background:var(--cbt-rosu)"></span>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section style="padding:64px 32px;background:var(--cbt-alb)">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">De ce CBT</div>
+      <h2 style="font-size:var(--fs-h2);font-weight:800;letter-spacing:-0.02em;margin:0 0 8px">Ce primești ca membru</h2>
+      <p style="color:var(--cbt-gri-60);max-width:60ch;margin:0 0 32px;line-height:1.6">Spațiu pregătit pentru beneficiile pe care CBT le va defini — pagina nu va trebui reconstruită.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:24px">
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Card" dc-props="{{ cardBaseProps }}" hint-size="100%,190px">
+          <div style="width:48px;height:48px;border-radius:6px;display:grid;place-items:center;background:var(--cbt-albastru-10);margin-bottom:12px"><span style="width:14px;height:14px;background:var(--cbt-albastru)"></span></div>
+          <h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px">Comunitate</h3>
+          <p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">Întâlniri lunare și un grup activ de oameni care te înțeleg.</p>
+        </x-import>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Card" dc-props="{{ cardReservedProps }}" hint-size="100%,190px">
+          <div style="width:48px;height:48px;border-radius:6px;display:grid;place-items:center;background:var(--cbt-albastru-10);margin-bottom:12px"><span style="width:14px;height:14px;background:var(--cbt-galben)"></span></div>
+          <h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px;color:var(--cbt-gri-60)">Beneficiu de definit</h3>
+          <p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">Spațiu rezervat — se completează la nevoie.</p>
+        </x-import>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Card" dc-props="{{ cardReservedProps }}" hint-size="100%,190px">
+          <div style="width:48px;height:48px;border-radius:6px;display:grid;place-items:center;background:var(--cbt-albastru-10);margin-bottom:12px"><span style="width:14px;height:14px;background:var(--cbt-rosu)"></span></div>
+          <h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px;color:var(--cbt-gri-60)">Beneficiu de definit</h3>
+          <p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">Spațiu rezervat — se completează la nevoie.</p>
+        </x-import>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section style="padding:64px 32px;background:var(--cbt-gri-10)">
+    <div style="max-width:1140px;margin:0 auto">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.StatsBand" stats="{{ stats }}" hint-size="100%,150px"></x-import>
+    </div>
+  </section>
+
+  <!-- Events -->
+  <section style="padding:64px 32px;background:var(--cbt-alb)">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Evenimente · 2026</div>
+      <h2 style="font-size:var(--fs-h2);font-weight:800;letter-spacing:-0.02em;margin:0 0 24px">Ce urmează</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:24px">
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.EventCard" date="14 MAR 2026" title="Mărțișor basarabean" location="Casa Tineretului, Timișoara" description="Sărbătorim primăvara cu tradiții de acasă." onClick="{{ goEvenimente }}" hint-size="100%,320px"></x-import>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.EventCard" date="27 AUG 2026" title="Ziua Independenței RM" accent="rosu" location="Parcul Rozelor, Timișoara" description="Concert, mâncare și voie bună în aer liber." onClick="{{ goEvenimente }}" hint-size="100%,320px"></x-import>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.EventCard" date="01 DEC 2026" title="Seara de colinde" location="Sala Capitol, Timișoara" description="Colinde basarabene, la lumânare." onClick="{{ goEvenimente }}" hint-size="100%,320px"></x-import>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section style="padding:64px 32px;background:var(--cbt-gri-10)">
+    <div style="max-width:1140px;margin:0 auto">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Voci din comunitate</div>
+          <h2 style="font-size:var(--fs-h2);font-weight:800;letter-spacing:-0.02em;margin:0">Ce spun membrii</h2>
+        </div>
+        <div style="display:flex;gap:8px;flex:none">
+          <button aria-label="Anteriorul" onClick="{{ testiPrev }}" style="width:40px;height:40px;padding:0;border:1.5px solid var(--cbt-gri-30);border-radius:var(--radius-pill);background:var(--cbt-alb);color:var(--cbt-negru);display:inline-flex;align-items:center;justify-content:center;line-height:0;opacity:{{ testiPrevOpacity }};cursor:{{ testiPrevCursor }};transition:border-color .15s,background .15s">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+          </button>
+          <button aria-label="Următorul" onClick="{{ testiNext }}" style="width:40px;height:40px;padding:0;border:1.5px solid var(--cbt-gri-30);border-radius:var(--radius-pill);background:var(--cbt-alb);color:var(--cbt-negru);display:inline-flex;align-items:center;justify-content:center;line-height:0;opacity:{{ testiNextOpacity }};cursor:{{ testiNextCursor }};transition:border-color .15s,background .15s">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:24px">
+        <sc-for list="{{ testiVisible }}" as="t" hint-placeholder-count="2">
+          <x-import component-from-global-scope="CBTDesignSystem_f19338.Testimonial" quote="{{ t.quote }}" name="{{ t.name }}" origin="{{ t.origin }}" accent="{{ t.accent }}" hint-size="100%,170px"></x-import>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section style="background:var(--cbt-albastru);color:var(--cbt-alb);padding:80px 32px;text-align:center">
+    <div style="max-width:720px;margin:0 auto">
+      <h2 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 16px">Gata să faci parte?</h2>
+      <p style="color:rgba(255,255,255,0.85);font-size:var(--fs-body-lg);margin:0 0 28px;line-height:1.6">Trei câmpuri, un minut. Te adăugăm pe listă și te anunțăm la următorul eveniment.</p>
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="lg" onClick="{{ goContact }}" hint-size="auto,56px">Înscrie-te în comunitate</x-import>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- ============ CINE SUNTEM ============ -->
+<sc-if value="{{ isCine }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:900px;margin:0 auto;padding:64px 32px">
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Cine suntem</div>
+  <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 16px">O comunitate, mulți oameni</h1>
+  <p style="font-size:var(--fs-body-lg);color:var(--cbt-gri-90);margin:0 0 16px;line-height:1.6">CBT adună basarabenii stabiliți în Timișoara — studenți, familii, profesioniști — în jurul aceleiași idei: să nu fim singuri departe de casă.</p>
+  <div style="display:flex;gap:5px;margin:8px 0 24px"><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-galben)"></span><span style="width:12px;height:12px;background:var(--cbt-rosu)"></span></div>
+  <p style="color:var(--cbt-gri-60);line-height:1.7;margin:0 0 32px">Ne-am format în 2019 dintr-un grup mic de prieteni. Astăzi organizăm evenimente lunare, sprijinim studenții nou-veniți și ținem viu ce am adus de acasă: limba, tradițiile, gustul pâinii de la Chișinău.</p>
+  <div style="height:280px;border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--cbt-albastru),var(--cbt-albastru-inchis));display:flex;align-items:flex-end;padding:20px;margin-bottom:40px"><span style="font-family:var(--font-mono);font-size:var(--fs-label);color:rgba(255,255,255,.8);background:rgba(16,16,16,.35);padding:6px 12px;border-radius:var(--radius-sm)">FOTO · echipa CBT la un eveniment</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:24px">
+    <div><span style="display:block;width:12px;height:12px;background:var(--cbt-albastru);margin-bottom:10px"></span><h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px">Apartenență</h3><p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">Un loc unde vorbim aceeași limbă și ne înțelegem din priviri.</p></div>
+    <div><span style="display:block;width:12px;height:12px;background:var(--cbt-galben);margin-bottom:10px"></span><h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px">Sprijin</h3><p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">Ajutor concret pentru nou-veniți: acte, cazare, primele contacte.</p></div>
+    <div><span style="display:block;width:12px;height:12px;background:var(--cbt-rosu);margin-bottom:10px"></span><h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px">Identitate</h3><p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">Ținem tradițiile vii — de la Mărțișor la colindele de iarnă.</p></div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ PROIECTE ============ -->
+<sc-if value="{{ isProiecte }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1140px;margin:0 auto;padding:64px 32px">
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Ce facem</div>
+  <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 8px">Proiectele noastre</h1>
+  <p style="color:var(--cbt-gri-60);max-width:60ch;margin:0;line-height:1.6">Proiecte trecute și viitoare — de la ateliere culturale la rețele de sprijin pentru nou-veniți.</p>
+  <div style="display:flex;gap:5px;margin:24px 0 32px"><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-galben)"></span><span style="width:12px;height:12px;background:var(--cbt-rosu)"></span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:24px">
+    <sc-for list="{{ projectsVisible }}" as="pr" hint-placeholder-count="3">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Card" dc-props="{{ cardBaseProps }}" hint-size="100%,170px">
+        <span style="display:inline-block;font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;color:{{ pr.chipColor }};background:{{ pr.chipBg }};padding:3px 9px;border-radius:var(--radius-sm);margin-bottom:10px">{{ pr.tag }}</span>
+        <h3 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 6px">{{ pr.title }}</h3>
+        <p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">{{ pr.text }}</p>
+      </x-import>
+    </sc-for>
+  </div>
+  <sc-if value="{{ projectsHasMore }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;justify-content:center;margin-top:32px">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" variant="secondary" onClick="{{ showMoreProjects }}" hint-size="auto,48px">Arată mai multe proiecte</x-import>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ EVENIMENTE ============ -->
+<sc-if value="{{ isEvenimente }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1140px;margin:0 auto;padding:64px 32px">
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Evenimente</div>
+  <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 8px">Ce se întâmplă la CBT</h1>
+  <p style="color:var(--cbt-gri-60);max-width:60ch;margin:0;line-height:1.6">Fiecare eveniment are pagină proprie cu detalii, locație și înscriere.</p>
+  <div style="display:flex;gap:5px;margin:24px 0 32px"><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-galben)"></span><span style="width:12px;height:12px;background:var(--cbt-rosu)"></span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:24px">
+    <sc-for list="{{ eventsVisible }}" as="ev" hint-placeholder-count="3">
+      <div onClick="{{ ev.onClick }}" style="cursor:pointer">
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.EventCard" date="{{ ev.date }}" title="{{ ev.title }}" location="{{ ev.location }}" description="{{ ev.description }}" accent="{{ ev.accent }}" hint-size="100%,320px"></x-import>
+      </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ eventsHasMore }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;justify-content:center;margin-top:32px">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" variant="secondary" onClick="{{ showMoreEvents }}" hint-size="auto,48px">Arată mai multe evenimente</x-import>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ NOUTĂȚI & PRESĂ ============ -->
+<sc-if value="{{ isNoutati }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1140px;margin:0 auto;padding:64px 32px">
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Noutăți & Presă</div>
+  <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 8px">Ce mai e nou</h1>
+  <p style="color:var(--cbt-gri-60);max-width:60ch;margin:0;line-height:1.6">Articole, comunicate de presă și press kit descărcabil — logo-uri high-res și poze de arhivă.</p>
+  <div style="display:flex;gap:5px;margin:24px 0 32px"><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-galben)"></span><span style="width:12px;height:12px;background:var(--cbt-rosu)"></span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:24px">
+    <sc-for list="{{ newsVisible }}" as="art" hint-placeholder-count="3">
+      <div onClick="{{ art.onClick }}" style="cursor:pointer">
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Card" dc-props="{{ cardBaseProps }}" hint-size="100%,150px">
+          <span style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60)">{{ art.date }}</span>
+          <h3 style="font-size:var(--fs-h3);font-weight:700;margin:6px 0 6px">{{ art.title }}</h3>
+          <p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0;line-height:1.55">{{ art.excerpt }}</p>
+        </x-import>
+      </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ newsHasMore }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;justify-content:center;margin-top:32px">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" variant="secondary" onClick="{{ showMoreNews }}" hint-size="auto,48px">Arată mai multe</x-import>
+    </div>
+  </sc-if>
+  <div style="height:56px"></div>
+
+  <div style="background:var(--cbt-gri-10);border-radius:var(--radius-lg);padding:40px 32px">
+    <h2 style="font-size:var(--fs-h3);font-weight:800;letter-spacing:-0.02em;margin:0 0 6px">Press kit</h2>
+    <p style="color:var(--cbt-gri-60);font-size:var(--fs-small);margin:0 0 24px;line-height:1.55">Materialele sunt disponibile direct — fără să le ceri pe email.</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:16px;background:var(--cbt-alb);border:1px solid var(--cbt-gri-10);border-radius:var(--radius-md);padding:14px 18px">
+        <img src="assets/mark-color.png" alt="Logo CBT" style="height:40px;width:auto;display:block">
+        <div style="flex:1"><b style="display:block;font-size:var(--fs-small)">Pachet logo (SVG + PNG)</b><span style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60)">ZIP · 2.4 MB</span></div>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="sm" variant="secondary" hint-size="auto,40px">Descarcă</x-import>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;background:var(--cbt-alb);border:1px solid var(--cbt-gri-10);border-radius:var(--radius-md);padding:14px 18px">
+        <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--cbt-albastru),var(--cbt-albastru-inchis))"></div>
+        <div style="flex:1"><b style="display:block;font-size:var(--fs-small)">Poze de arhivă high-res</b><span style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60)">ZIP · 38 MB</span></div>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="sm" variant="secondary" hint-size="auto,40px">Descarcă</x-import>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;background:var(--cbt-alb);border:1px solid var(--cbt-gri-10);border-radius:var(--radius-md);padding:14px 18px">
+        <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:var(--cbt-gri-10);display:grid;place-items:center;font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60)">PDF</div>
+        <div style="flex:1"><b style="display:block;font-size:var(--fs-small)">Comunicat de presă — aniversare</b><span style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60)">PDF · 120 KB</span></div>
+        <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="sm" variant="secondary" hint-size="auto,40px">Descarcă</x-import>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ CONTACT / ÎNSCRIERE ============ -->
+<sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:560px;margin:0 auto;padding:64px 32px">
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Înscriere</div>
+  <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--cbt-albastru-10);border:1px solid var(--cbt-gri-10);border-radius:var(--radius-lg);padding:32px">
+      <div style="display:flex;gap:5px;margin-bottom:16px"><span style="width:14px;height:14px;background:var(--cbt-albastru)"></span><span style="width:14px;height:14px;background:var(--cbt-galben)"></span><span style="width:14px;height:14px;background:var(--cbt-rosu)"></span></div>
+      <h1 style="font-size:var(--fs-h2);font-weight:800;letter-spacing:-0.02em;margin:0 0 12px">Te-am adăugat pe listă! 🎉</h1>
+      <p style="color:var(--cbt-gri-90);margin:0 0 20px;line-height:1.6">Între timp, intră în grupul nostru de Facebook — acolo anunțăm întâi evenimentele.</p>
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" variant="dark" hint-size="auto,48px">Deschide grupul de Facebook</x-import>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ true }}">
+  <div style="display:{{ formDisplay }}">
+    <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 8px">Devino membru</h1>
+    <p style="color:var(--cbt-gri-60);margin:0 0 32px;line-height:1.6">Doar trei câmpuri. Fără spam — te anunțăm doar la evenimente.</p>
+    <x-import component-from-global-scope="CBTDesignSystem_f19338.Input" label="Nume și prenume" value="{{ nume }}" onChange="{{ onNume }}" placeholder="ex. Ana Munteanu" error="{{ numeErr }}" hint-size="100%,92px"></x-import>
+    <x-import component-from-global-scope="CBTDesignSystem_f19338.Input" label="Email" type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="ana@exemplu.ro" error="{{ emailErr }}" hint-size="100%,92px"></x-import>
+    <x-import component-from-global-scope="CBTDesignSystem_f19338.Input" label="Orașul de origine" optional="{{ true }}" value="{{ oras }}" onChange="{{ onOras }}" placeholder="ex. Cahul" hint-size="100%,92px"></x-import>
+    <div style="margin:8px 0 12px">
+      <x-import component-from-global-scope="CBTDesignSystem_f19338.Checkbox" checked="{{ gdpr }}" onChange="{{ onGdpr }}" hint-size="100%,48px">Sunt de acord ca datele mele să fie folosite pentru comunicări legate de activitatea CBT, conform <a href="#" style="color:var(--cbt-albastru);font-weight:600">Politicii de Confidențialitate</a>.</x-import>
+      <sc-if value="{{ gdprErr }}" hint-placeholder-val="{{ false }}"><span style="color:var(--cbt-rosu);font-size:var(--fs-label);display:block;margin-top:6px">Bifează acordul ca să te putem contacta.</span></sc-if>
+    </div>
+    <p style="font-size:var(--fs-label);color:var(--cbt-gri-60);margin:0 0 24px;line-height:1.5">Datele tale sunt salvate într-un Google Sheet privat, accesibil doar echipei CBT. Nu le partajăm cu terți.</p>
+    <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="lg" onClick="{{ submit }}" dc-props="{{ submitProps }}" hint-size="100%,56px">Înscrie-te în comunitate</x-import>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ DETALIU EVENIMENT ============ -->
+<sc-if value="{{ isEvenimentDetail }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:760px;margin:0 auto;padding:40px 32px 64px">
+  <a href="#" onClick="{{ goEvenimente }}" style="display:inline-block;font-size:var(--fs-small);color:var(--cbt-albastru);text-decoration:none;margin-bottom:24px">← Înapoi la evenimente</a>
+  <div style="height:300px;border-radius:var(--radius-lg);position:relative;background:{{ evDetail.heroBg }};margin-bottom:24px;overflow:hidden">
+    <span style="position:absolute;top:16px;left:16px;background:var(--cbt-galben);color:var(--cbt-negru);font-family:var(--font-mono);font-weight:600;font-size:var(--fs-label);padding:6px 12px;border-radius:var(--radius-sm)">{{ evDetail.date }}</span>
+    <span style="position:absolute;bottom:16px;left:16px;font-family:var(--font-mono);font-size:var(--fs-label);color:rgba(255,255,255,.8);background:rgba(16,16,16,.35);padding:6px 12px;border-radius:var(--radius-sm)">FOTO · imagine eveniment</span>
+  </div>
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Eveniment</div>
+  <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 16px">{{ evDetail.title }}</h1>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px">
+    <span style="font-family:var(--font-mono);font-size:var(--fs-label);background:var(--cbt-gri-10);padding:6px 14px;border-radius:var(--radius-pill)">{{ evDetail.date }}</span>
+    <span style="font-family:var(--font-mono);font-size:var(--fs-label);background:var(--cbt-gri-10);padding:6px 14px;border-radius:var(--radius-pill)">ora {{ evDetail.time }}</span>
+    <span style="font-family:var(--font-mono);font-size:var(--fs-label);background:var(--cbt-gri-10);padding:6px 14px;border-radius:var(--radius-pill)">{{ evDetail.location }}</span>
+  </div>
+  <p style="font-size:var(--fs-body-lg);color:var(--cbt-gri-90);margin:0 0 16px;line-height:1.6">{{ evDetail.description }}</p>
+  <p style="color:var(--cbt-gri-60);line-height:1.7;margin:0 0 32px">{{ evDetail.body }}</p>
+  <div style="background:var(--cbt-albastru-10);border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:32px">
+    <h2 style="font-size:var(--fs-h3);font-weight:700;margin:0 0 12px">Detalii practice</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:16px">
+      <div><div style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Data & ora</div><b style="font-size:var(--fs-small)">{{ evDetail.date }} · {{ evDetail.time }}</b></div>
+      <div><div style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Locație</div><b style="font-size:var(--fs-small)">{{ evDetail.location }}</b></div>
+      <div><div style="font-family:var(--font-mono);font-size:var(--fs-label);color:var(--cbt-gri-60);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Acces</div><b style="font-size:var(--fs-small)">Intrarea liberă</b></div>
+    </div>
+  </div>
+  <x-import component-from-global-scope="CBTDesignSystem_f19338.Button" size="lg" onClick="{{ goContact }}" hint-size="auto,56px">Înscrie-te în comunitate</x-import>
+</div>
+</sc-if>
+
+<!-- ============ DETALIU NOUTATE (fără imagine) ============ -->
+<sc-if value="{{ isNoutateDetail }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:720px;margin:0 auto;padding:40px 32px 64px">
+  <a href="#" onClick="{{ goNoutati }}" style="display:inline-block;font-size:var(--fs-small);color:var(--cbt-albastru);text-decoration:none;margin-bottom:24px">← Înapoi la Noutăți</a>
+  <div style="font-family:var(--font-mono);font-size:var(--fs-label);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--cbt-albastru);margin-bottom:8px">Noutăți & Presă · {{ artDetail.date }}</div>
+  <h1 style="font-size:var(--fs-h1);font-weight:800;letter-spacing:-0.02em;margin:0 0 16px">{{ artDetail.title }}</h1>
+  <div style="display:flex;gap:5px;margin:0 0 28px"><span style="width:12px;height:12px;background:var(--cbt-albastru)"></span><span style="width:12px;height:12px;background:var(--cbt-galben)"></span><span style="width:12px;height:12px;background:var(--cbt-rosu)"></span></div>
+  <p style="font-size:var(--fs-body-lg);color:var(--cbt-gri-90);margin:0 0 16px;line-height:1.6">{{ artDetail.excerpt }}</p>
+  <p style="color:var(--cbt-gri-60);line-height:1.7;margin:0 0 32px">{{ artDetail.body }}</p>
+  <div style="border-top:1px solid var(--cbt-gri-10);padding-top:20px;font-size:var(--fs-small);color:var(--cbt-gri-60)">Materiale de presă disponibile în <a href="#" onClick="{{ goNoutati }}" style="color:var(--cbt-albastru);font-weight:600">press kit</a>.</div>
+</div>
+</sc-if>
+
+<!-- ============ FOOTER ============ -->
+<footer style="background:var(--cbt-negru);color:var(--cbt-gri-30);padding:48px 32px 32px;font-size:var(--fs-small)">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;max-width:1140px;margin:0 auto">
+    <div>
+      <img src="assets/mark-white.png" alt="CBT" style="height:40px;width:auto;display:block">
+      <p style="max-width:32ch;margin-top:12px;line-height:1.6">Comunitatea Basarabenilor din Timișoara — asociație non-profit.</p>
+    </div>
+    <div>
+      <h4 style="color:var(--cbt-alb);font-size:var(--fs-small);margin:0 0 12px">Navigație</h4>
+      <a href="#" onClick="{{ goEvenimente }}" style="color:var(--cbt-gri-30);text-decoration:none;display:block;margin-bottom:8px">Evenimente</a>
+      <a href="#" onClick="{{ goContact }}" style="color:var(--cbt-gri-30);text-decoration:none;display:block;margin-bottom:8px">Înscriere</a>
+      <a href="#" onClick="{{ goAcasa }}" style="color:var(--cbt-gri-30);text-decoration:none;display:block">Acasă</a>
+    </div>
+    <div>
+      <h4 style="color:var(--cbt-alb);font-size:var(--fs-small);margin:0 0 12px">Legal</h4>
+      <a href="#" style="color:var(--cbt-gri-30);text-decoration:none;display:block;margin-bottom:8px">Politica de confidențialitate</a>
+      <a href="#" style="color:var(--cbt-gri-30);text-decoration:none;display:block">Politica de cookie-uri</a>
+    </div>
+    <div>
+      <h4 style="color:var(--cbt-alb);font-size:var(--fs-small);margin:0 0 12px">Urmărește-ne</h4>
+      <div style="display:flex;gap:12px">
+        <a href="#" aria-label="Facebook" style="width:40px;height:40px;border:1px solid var(--cbt-gri-60);border-radius:var(--radius-sm);display:grid;place-items:center;color:var(--cbt-gri-30);text-decoration:none">f</a>
+        <a href="#" aria-label="Instagram" style="width:40px;height:40px;border:1px solid var(--cbt-gri-60);border-radius:var(--radius-sm);display:grid;place-items:center;color:var(--cbt-gri-30);text-decoration:none">◎</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1140px;margin:32px auto 0;padding-top:24px;border-top:1px solid var(--cbt-gri-90);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between">
+    <span>© 2026 CBT — Comunitatea Basarabenilor din Timișoara</span>
+    <span style="font-family:var(--font-mono)">basarabenitm.ro</span>
+  </div>
+</footer>
+
+<!-- ============ COOKIE BANNER ============ -->
+<sc-if value="{{ cookie }}" hint-placeholder-val="{{ true }}">
+<div style="position:fixed;left:24px;right:24px;bottom:24px;display:flex;justify-content:center;z-index:50">
+  <x-import component-from-global-scope="CBTDesignSystem_f19338.CookieBanner" onAccept="{{ acceptCookie }}" onRefuse="{{ refuseCookie }}" hint-size="100%,120px"></x-import>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:820},&quot;startPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;acasa&quot;,&quot;options&quot;:[&quot;acasa&quot;,&quot;cine&quot;,&quot;proiecte&quot;,&quot;evenimente&quot;,&quot;noutati&quot;,&quot;contact&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototip&quot;},&quot;showCookieBanner&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototip&quot;}}">
+class Component extends DCLogic {
+  state = { page: 'acasa', nav: false, lang: 'ro', cookieDismissed: false, sent: false, nume: '', email: '', oras: '', gdpr: false, err: '', eventsShown: 3, newsShown: 3, detailIndex: 0, menuOpen: false, isMobile: false, testiIndex: 0, projectsShown: 3 };
+
+  componentDidMount() {
+    this._mq = () => this.setState({ isMobile: window.innerWidth < 820 });
+    this._mq();
+    window.addEventListener('resize', this._mq);
+  }
+  componentWillUnmount() {
+    if (this._mq) window.removeEventListener('resize', this._mq);
+  }
+
+  go(p) {
+    this.setState({ page: p, nav: true, menuOpen: false });
+    if (typeof window !== 'undefined') window.scrollTo(0, 0);
+  }
+
+  submit() {
+    const s = this.state;
+    if (!s.nume.trim()) { this.setState({ err: 'nume' }); return; }
+    if (!(s.email.includes('@') && s.email.includes('.'))) { this.setState({ err: 'email' }); return; }
+    if (!s.gdpr) { this.setState({ err: 'gdpr' }); return; }
+    this.setState({ err: '', sent: true });
+    if (typeof window !== 'undefined') window.scrollTo(0, 0);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const page = s.nav ? s.page : (this.props.startPage || 'acasa');
+    const mk = (id, label) => ({
+      id, label,
+      active: page === id,
+      color: page === id ? 'var(--cbt-albastru)' : 'var(--cbt-gri-90)',
+      weight: page === id ? 700 : 500,
+      marker: page === id ? 'block' : 'none',
+      onClick: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go(id); },
+    });
+    const isMobile = s.isMobile;
+    const ro = s.lang === 'ro', ru = s.lang === 'ru';
+    const cookie = s.cookieDismissed ? false : (this.props.showCookieBanner !== false);
+    const PER = 3;
+    const eventsAll = [
+      { date: '14 MAR 2026', time: '18:00', title: 'Mărțișor basarabean', location: 'Casa Tineretului, Timișoara', description: 'Sărbătorim primăvara cu tradiții de acasă — atelier de mărțișoare și muzică.', accent: 'albastru', body: 'Începem primăvara așa cum o făceam acasă: cu atelier de mărțișoare pentru copii și adulți, muzică populară live și povești despre obiceiurile de 1 Martie. Intrarea este liberă, iar materialele pentru atelier le punem noi la dispoziție.' },
+      { date: '27 AUG 2026', time: '12:00', title: 'Ziua Independenței RM', location: 'Parcul Rozelor, Timișoara', description: 'Concert, mâncare basarabeană și voie bună în aer liber.', accent: 'rosu', body: 'Marcăm împreună Ziua Independenței Republicii Moldova printr-o zi în aer liber: concert cu artiști basarabeni, bucate tradiționale și un colț pentru cei mici. Adu-ți familia și prietenii — sărbătorim ca acasă.' },
+      { date: '01 DEC 2026', time: '19:00', title: 'Seara de colinde basarabene', location: 'Sala Capitol, Timișoara', description: 'Colinde de acasă, la lumânare, alături de comunitate.', accent: 'albastru', body: 'O seară caldă de colinde basarabene, la lumânare, cu grupul vocal al comunității și cu invitați speciali. La final, ceai fierbinte și cozonac pentru toată lumea.' },
+      { date: '15 IAN 2026', time: '18:30', title: 'Cenaclu: poeți basarabeni', location: 'Cafeneaua Verde, Timișoara', description: 'Seară de lectură dedicată lui Grigore Vieru.', accent: 'rosu', body: 'Ne adunăm în jurul poeziei basarabene, cu o seară dedicată lui Grigore Vieru. Lectură, discuții și muzică — o întâlnire pentru cei care simt dorul de limba de acasă.' },
+      { date: '20 FEB 2026', time: '17:00', title: 'Ajutor pentru studenți noi', location: 'Sediul CBT', description: 'Sesiune de orientare pentru studenții proaspăt veniți.', accent: 'albastru', body: 'Sesiune practică de orientare pentru studenții basarabeni proaspăt ajunși în Timișoara: acte, cazare, transport și primele contacte. Vin membri cu experiență care au trecut prin aceiași pași.' },
+      { date: '09 MAI 2026', time: '11:00', title: 'Ziua Europei — stand CBT', location: 'Piața Victoriei, Timișoara', description: 'Ne găsești în piață cu bucate și povești basarabene.', accent: 'rosu', body: 'De Ziua Europei ne găsești în Piața Victoriei cu un stand plin de bucate, tradiții și povești basarabene. Treci pe la noi, gustă plăcinte de casă și află ce facem în comunitate.' },
+    ];
+    const newsAll = [
+      { date: '02 FEB 2026', title: 'CBT împlinește 7 ani', excerpt: 'Un bilanț al comunității și planurile pentru anul care vine.', body: 'Au trecut șapte ani de la prima întâlnire dintr-un apartament din Timișoara. Astăzi suntem sute de membri, cu evenimente lunare și proiecte care sprijină nou-veniții. În articol facem un bilanț și anunțăm direcțiile pentru anul care urmează.' },
+      { date: '18 IAN 2026', title: 'Parteneriat cu Primăria', excerpt: 'Spațiu pentru evenimentele comunității în 2026.', body: 'Am semnat un parteneriat prin care comunitatea are acces la spații pentru evenimente pe tot parcursul anului 2026. Este un pas important pentru a putea găzdui mai mulți oameni la întâlnirile noastre.' },
+      { date: '05 IAN 2026', title: 'Rezultatele campaniei de iarnă', excerpt: 'Peste 40 de familii sprijinite în sezonul rece.', body: 'Campania de iarnă s-a încheiat cu peste 40 de familii sprijinite cu alimente, haine și ajutor la acte. Mulțumim tuturor voluntarilor și donatorilor care au făcut posibil acest lucru.' },
+      { date: '12 DEC 2025', title: 'Colindul a strâns 300 de oameni', excerpt: 'Sala Capitol s-a umplut la seara de colinde basarabene.', body: 'Seara de colinde a adunat peste 300 de oameni la Sala Capitol. A fost una dintre cele mai emoționante întâlniri de până acum — mulțumim că ați fost alături de noi.' },
+      { date: '20 NOV 2025', title: 'Nou grup pentru studenți', excerpt: 'Am lansat un canal dedicat studenților nou-veniți.', body: 'Am lansat un canal dedicat studenților basarabeni proaspăt ajunși în oraș, cu informații practice și un mentor pentru fiecare nou-venit. Alătură-te dacă tocmai ai început studiile în Timișoara.' },
+      { date: '03 OCT 2025', title: 'CBT la Festivalul Diversității', excerpt: 'Standul comunității, vizitat de sute de timișoreni.', body: 'Am participat la Festivalul Diversității cu un stand care a fost vizitat de sute de timișoreni. Am povestit despre Basarabia, am servit bucate tradiționale și am făcut multe prietenii noi.' },
+    ];
+    const openEvent = (i) => { this.setState({ page: 'eveniment', nav: true, detailIndex: i }); if (typeof window !== 'undefined') window.scrollTo(0, 0); };
+    const openNews = (i) => { this.setState({ page: 'noutate', nav: true, detailIndex: i }); if (typeof window !== 'undefined') window.scrollTo(0, 0); };
+    const heroBg = (a) => a === 'rosu' ? 'linear-gradient(135deg,var(--cbt-rosu),var(--cbt-rosu-inchis))' : 'linear-gradient(135deg,var(--cbt-albastru),var(--cbt-albastru-inchis))';
+    const projectsAll = [
+      { tag: 'TRECUT · 2024', reserved: false, tagBlue: false, title: 'Școala de weekend', text: 'Ateliere de limbă și istorie pentru copiii comunității.' },
+      { tag: 'TRECUT · 2023', reserved: false, tagBlue: false, title: 'Ghidul nou-venitului', text: 'Broșură cu pașii de urmat la mutarea în Timișoara.' },
+      { tag: 'VIITOR · 2026', reserved: false, tagBlue: true, title: 'Rețea de mentori', text: 'Fiecare nou-venit, conectat cu un membru cu experiență.' },
+      { tag: 'TRECUT · 2023', reserved: false, tagBlue: false, title: 'Caravana culturală', text: 'Spectacole și expoziții basarabene în cartierele Timișoarei.' },
+      { tag: 'TRECUT · 2022', reserved: false, tagBlue: false, title: 'Bursa de sprijin', text: 'Ajutor financiar pentru studenții basarabeni la început de drum.' },
+      { tag: 'VIITOR · 2026', reserved: false, tagBlue: true, title: 'Centru comunitar', text: 'Un spațiu propriu pentru întâlniri, ateliere și evenimente.' },
+    ];
+    const testimonials = [
+      { quote: 'Când am ajuns la Timișoara nu cunoșteam pe nimeni. Prin CBT mi-am găsit prietenii de aici.', name: 'Maria C.', origin: 'Chișinău → Timișoara', accent: 'albastru' },
+      { quote: 'Evenimentele comunității m-au ajutat să rămân aproape de casă, chiar și la 700 km distanță.', name: 'Ion B.', origin: 'Bălți → Timișoara', accent: 'rosu' },
+      { quote: 'M-au ajutat cu actele și cu primele contacte în oraș. Nu m-am simțit singur nicio clipă.', name: 'Andrei P.', origin: 'Cahul → Timișoara', accent: 'albastru' },
+      { quote: 'Copiii mei au învățat colinde basarabene aici. Pentru mine, asta înseamnă acasă.', name: 'Elena V.', origin: 'Orhei → Timișoara', accent: 'rosu' },
+    ];
+    const tPer = isMobile ? 1 : 2;
+    const tPages = Math.max(1, testimonials.length - tPer + 1);
+    const tIdx = Math.min(s.testiIndex, tPages - 1);
+    const ev = eventsAll[s.detailIndex] || eventsAll[0];
+    const art = newsAll[s.detailIndex] || newsAll[0];
+    return {
+      isEvenimentDetail: page === 'eveniment',
+      isNoutateDetail: page === 'noutate',
+      evDetail: { ...ev, heroBg: heroBg(ev.accent) },
+      artDetail: art,
+      goNoutati: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('noutati'); },
+      cardClickProps: { hoverable: true, style: { cursor: 'pointer' } },
+      eventsVisible: eventsAll.slice(0, s.eventsShown).map((e, i) => ({ ...e, onClick: () => openEvent(i) })),
+      eventsHasMore: s.eventsShown < eventsAll.length,
+      showMoreEvents: () => this.setState((st) => ({ eventsShown: Math.min(st.eventsShown + PER, eventsAll.length) })),
+      newsVisible: newsAll.slice(0, s.newsShown).map((a, i) => ({ ...a, onClick: () => openNews(i) })),
+      newsHasMore: s.newsShown < newsAll.length,
+      showMoreNews: () => this.setState((st) => ({ newsShown: Math.min(st.newsShown + PER, newsAll.length) })),
+      isAcasa: page === 'acasa', isCine: page === 'cine', isProiecte: page === 'proiecte',
+      isEvenimente: page === 'evenimente', isNoutati: page === 'noutati', isContact: page === 'contact',
+      navItems: [mk('acasa', 'Acasă'), mk('cine', 'Cine suntem'), mk('proiecte', 'Proiecte'), mk('evenimente', 'Evenimente'), mk('noutati', 'Noutăți'), mk('contact', 'Contact')],
+      goAcasa: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('acasa'); },
+      goContact: () => this.go('contact'),
+      isMobile,
+      menuOpen: s.menuOpen,
+      toggleMenu: () => this.setState((st) => ({ menuOpen: !st.menuOpen })),
+      desktopNavDisplay: isMobile ? 'none' : 'flex',
+      desktopCtaDisplay: isMobile ? 'none' : 'inline-flex',
+      hamburgerDisplay: isMobile ? 'flex' : 'none',
+      mobilePanelDisplay: (isMobile && s.menuOpen) ? 'block' : 'none',
+      heroMosaicDisplay: isMobile ? 'none' : 'grid',
+      fullWidthBtn: { style: { width: '100%' } },
+      goEvenimente: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('evenimente'); },
+      setRo: () => this.setState({ lang: 'ro' }),
+      setRu: () => this.setState({ lang: 'ru' }),
+      roBg: ro ? 'var(--cbt-albastru)' : 'transparent',
+      roColor: ro ? 'var(--cbt-alb)' : 'var(--cbt-gri-60)',
+      ruBg: ru ? 'var(--cbt-albastru)' : 'transparent',
+      ruColor: ru ? 'var(--cbt-alb)' : 'var(--cbt-gri-60)',
+      showRuNote: ru,
+      stats: [{ value: '248', label: 'membri activi' }, { value: '36', label: 'evenimente organizate' }, { value: '7', label: 'ani de comunitate' }],
+      projectsVisible: projectsAll.slice(0, s.projectsShown).map((p) => ({
+        ...p,
+        chipColor: p.tagBlue ? 'var(--cbt-albastru)' : 'var(--cbt-gri-60)',
+        chipBg: p.tagBlue ? 'var(--cbt-albastru-10)' : 'var(--cbt-gri-10)',
+      })),
+      projectsHasMore: s.projectsShown < projectsAll.length,
+      showMoreProjects: () => this.setState((st) => ({ projectsShown: Math.min(st.projectsShown + PER, projectsAll.length) })),
+      testiVisible: testimonials.slice(tIdx, tIdx + tPer),
+      testiPrev: () => this.setState((st) => ({ testiIndex: Math.max(0, st.testiIndex - 1) })),
+      testiNext: () => this.setState({ testiIndex: Math.min(tPages - 1, tIdx + 1) }),
+      testiPrevOpacity: tIdx <= 0 ? '0.35' : '1',
+      testiPrevCursor: tIdx <= 0 ? 'default' : 'pointer',
+      testiNextOpacity: tIdx >= tPages - 1 ? '0.35' : '1',
+      testiNextCursor: tIdx >= tPages - 1 ? 'default' : 'pointer',
+      heroSecProps: { style: { color: 'var(--cbt-alb)', borderColor: 'var(--cbt-gri-60)' } },
+      cardBaseProps: { hoverable: true },
+      cardReservedProps: { hoverable: false, style: { border: '2px dashed var(--cbt-gri-30)', boxShadow: 'none' } },
+      submitProps: { style: { width: '100%' } },
+      cookie,
+      acceptCookie: () => this.setState({ cookieDismissed: true }),
+      refuseCookie: () => this.setState({ cookieDismissed: true }),
+      sent: s.sent, formDisplay: s.sent ? 'none' : 'block',
+      nume: s.nume, email: s.email, oras: s.oras, gdpr: s.gdpr,
+      onNume: (e) => this.setState({ nume: e.target.value }),
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onOras: (e) => this.setState({ oras: e.target.value }),
+      onGdpr: (e) => this.setState({ gdpr: e.target.checked }),
+      numeErr: s.err === 'nume' ? 'Spune-ne cum te cheamă.' : '',
+      emailErr: s.err === 'email' ? 'Adresa de email nu pare completă — verific-o, te rog.' : '',
+      gdprErr: s.err === 'gdpr',
+      submit: () => this.submit(),
+    };
+  }
+}
+</script>
+</body>
+</html>
