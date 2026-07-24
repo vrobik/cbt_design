@@ -1,0 +1,52 @@
+/* ============================================================
+   CBT — Culori / Colors
+   The four brand colors are lifted directly from the logo:
+   the fragmented Romanian tricolor mosaic + the black wordmark.
+   Every color has a fixed role — never used decoratively at random.
+   ============================================================ */
+:root {
+  /* ---- Base brand ---- */
+  --cbt-albastru: #2F448A;   /* blue  — primary: links, accent titles, section fills */
+  --cbt-galben:   #F9F04D;   /* yellow — action ONLY: the "Join" button, highlights */
+  --cbt-rosu:     #CF242A;   /* red   — errors, alerts, rare mosaic accents. Never a CTA */
+  --cbt-negru:    #101010;   /* black — wordmark, footer, stats band, outlines */
+  --cbt-alb:      #FFFFFF;   /* white */
+
+  /* ---- Derived shades ---- */
+  --cbt-albastru-inchis: #1F2E60;  /* hover on blue */
+  --cbt-albastru-10:     #EAEDF5;  /* tinted section / info-box fill */
+  --cbt-galben-hover:    #F5E82A;  /* hover on yellow */
+  --cbt-rosu-inchis:     #A81C21;  /* hover on red */
+
+  /* ---- Neutral ramp ---- */
+  --cbt-gri-90: #2A2A2A;  /* primary text */
+  --cbt-gri-60: #5C5C5C;  /* secondary text, captions */
+  --cbt-gri-30: #C9C9C9;  /* borders, dividers */
+  --cbt-gri-10: #F2F2F0;  /* subtle backgrounds, alternating sections */
+
+  /* ---- Semantic aliases ---- */
+  --color-primary:        var(--cbt-albastru);
+  --color-primary-hover:  var(--cbt-albastru-inchis);
+  --color-action:         var(--cbt-galben);
+  --color-action-hover:   var(--cbt-galben-hover);
+  --color-danger:         var(--cbt-rosu);
+  --color-danger-hover:   var(--cbt-rosu-inchis);
+
+  --text-strong:   var(--cbt-gri-90);
+  --text-body:     var(--cbt-gri-90);
+  --text-muted:    var(--cbt-gri-60);
+  --text-on-dark:  var(--cbt-alb);
+  --text-on-action:var(--cbt-negru);
+  --text-link:     var(--cbt-albastru);
+
+  --surface-page:  var(--cbt-alb);
+  --surface-alt:   var(--cbt-gri-10);
+  --surface-card:  var(--cbt-alb);
+  --surface-dark:  var(--cbt-negru);
+  --surface-info:  var(--cbt-albastru-10);
+
+  --border-subtle: var(--cbt-gri-10);
+  --border-default:var(--cbt-gri-30);
+  --border-strong: var(--cbt-negru);
+  --focus-ring:    var(--cbt-albastru);
+}

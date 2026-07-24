@@ -1,0 +1,40 @@
+/* ============================================================
+   CBT — Tipografie / Typography
+   Onest for everything human-facing; JetBrains Mono strictly for
+   numbers, dates, eyebrows and small labels.
+   Scale is mobile-first (clamp) on a 1.25 ratio.
+   ============================================================ */
+:root {
+  --font-text: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-display: var(--font-text);
+
+  /* Type scale */
+  --fs-display: clamp(2.2rem, 6vw, 3.8rem); /* @kind font */
+  --fs-h1:      clamp(1.9rem, 5vw, 3rem); /* @kind font */
+  --fs-h2:      clamp(1.5rem, 4vw, 2.2rem); /* @kind font */
+  --fs-h3:      clamp(1.2rem, 3vw, 1.5rem); /* @kind font */
+  --fs-body-lg: 1.125rem; /* @kind font */
+  --fs-body:    1rem; /* @kind font */
+  --fs-small:   0.875rem; /* @kind font */
+  --fs-label:   0.8125rem; /* @kind font */
+
+  /* Weights */
+  --fw-light:   300; /* @kind font */
+  --fw-regular: 400; /* @kind font */
+  --fw-medium:  500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:    700; /* @kind font */
+  --fw-extra:   800; /* @kind font */
+  --fw-black:   900; /* @kind font */
+
+  /* Line heights */
+  --lh-tight:  1.08; /* @kind font */
+  --lh-heading:1.15; /* @kind font */
+  --lh-body:   1.6; /* @kind font */
+
+  /* Letter spacing */
+  --ls-display: -0.03em; /* @kind font */
+  --ls-heading: -0.02em; /* @kind font */
+  --ls-eyebrow:  0.08em; /* @kind font */
+}
