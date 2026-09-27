@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/Button.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import Mosaic from '../../components/Mosaic.astro';
+---
+
+<BaseLayout
+  title="Acord primit"
+  description="Mulțumim, acordul tău a fost înregistrat."
+  noindex
+  conversie="acord_imagine"
+>
+  <div class="page page--narrow">
+    <Eyebrow>Acord imagine</Eyebrow>
+    <div class="box">
+      <Mosaic size={14} class="mk" />
+      <h1 class="h2">Mulțumim, acordul a fost înregistrat.</h1>
+      <p>
+        L-am salvat împreună cu data și ora trimiterii. Dacă te răzgândești, scrie-ne și scoatem imaginile de pe
+        site.
+      </p>
+      <Button variant="dark" href="/">Înapoi la prima pagină</Button>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .box {
+    background: var(--cbt-albastru-10);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+  }
+  .box :global(.mk) {
+    margin-bottom: var(--sp-3);
+  }
+  .box p {
+    margin: 0 0 20px;
+    line-height: var(--lh-body);
+  }
+</style>

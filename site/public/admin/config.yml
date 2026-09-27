@@ -1,0 +1,437 @@
+# ==========================================================================
+#  Sveltia CMS — ce pot edita voluntarii CBT la basarabenitm.ro/admin/
+#  Documentație: https://sveltiacms.app/en/docs
+#
+#  ⚠ Dacă adaugi/schimbi un câmp aici, actualizează și src/content.config.ts
+#    (schema care validează conținutul la build). Altfel build-ul poate eșua.
+#  (Valorile marcate cu &nume sunt refolosite mai jos cu *nume.)
+# ==========================================================================
+
+backend:
+  name: github
+  # ↓↓↓ DE SCHIMBAT după ce mutați proiectul în GitHub-ul organizației: „organizatie/depozit”
+  repo: ORGANIZATIE-CBT/basarabenitm
+  branch: main
+  # base_url se setează automat în admin/index.html (același domeniu ca site-ul).
+  auth_endpoint: api/auth
+  commit_messages:
+    create: "CMS: adaugă {{collection}} „{{slug}}”"
+    update: "CMS: actualizează {{collection}} „{{slug}}”"
+    delete: "CMS: șterge {{collection}} „{{slug}}”"
+    uploadMedia: "CMS: încarcă {{path}}"
+    deleteMedia: "CMS: șterge {{path}}"
+
+site_url: https://basarabenitm.ro
+display_url: https://basarabenitm.ro
+logo_url: /icon-192.png
+
+# Pozele se convertesc automat în WebP și se micșorează înainte de urcare,
+# ca depozitul să rămână mic chiar dacă se urcă poze direct de pe telefon.
+media_libraries:
+  default:
+    config:
+      max_file_size: 20000000
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2400
+          height: 2400
+
+# Folder implicit pentru fișiere. Colecțiile cu poze își au propriul folder în src/assets/uploads/,
+# cu cale relativă, ca Astro să poată optimiza automat imaginile (WebP/AVIF, dimensiuni responsive).
+media_folder: /public/uploads
+public_folder: /uploads
+
+# Adresele se fac fără diacritice: „Mărțișor” → „martisor”.
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  # ======================= EVENIMENTE =======================
+  - name: evenimente
+    label: Evenimente
+    label_singular: Eveniment
+    description: Fiecare eveniment are pagină proprie. Evenimentele trecute se mută automat la „Au avut loc”.
+    icon: event
+    folder: src/content/evenimente
+    create: true
+    slug: "{{titlu}}"
+    identifier_field: titlu
+    summary: "{{data}} — {{titlu}}"
+    sortable_fields:
+      fields: [data, titlu]
+      default: { field: data, direction: descending }
+    media_folder: /src/assets/uploads/evenimente
+    public_folder: ../../assets/uploads/evenimente
+    preview_path: evenimente/{{slug}}/
+    fields:
+      - { label: Titlu, name: titlu, widget: string }
+      - label: Data
+        name: data
+        widget: datetime
+        time_format: false
+        format: YYYY-MM-DD
+      - label: Ora de început
+        name: ora
+        widget: string
+        required: false
+        pattern: &patternOra ['^([01]?\d|2[0-3]):[0-5]\d$', 'Scrie ora ca în exemplu: 18:00']
+        hint: ex. 18:00
+      - label: Data de sfârșit
+        name: dataSfarsit
+        widget: datetime
+        time_format: false
+        format: YYYY-MM-DD
+        required: false
+        hint: Doar pentru evenimentele de mai multe zile.
+      - label: Ora de sfârșit
+        name: oraSfarsit
+        widget: string
+        required: false
+        pattern: *patternOra
+      - { label: Locație, name: locatie, widget: string, hint: "ex. Casa Tineretului, Timișoara" }
+      - { label: Adresă, name: adresa, widget: string, required: false, hint: "Strada și numărul — ajută Google Maps." }
+      - { label: Oraș, name: oras, widget: string, default: Timișoara }
+      - label: Descriere scurtă
+        name: descriere
+        widget: text
+        hint: O frază. Apare pe card, sub titlu și în Google.
+      - label: Imagine principală
+        name: imagine
+        widget: image
+        required: false
+        hint: Orizontală, ideal 1600×900. Apare și când distribui linkul pe Facebook.
+      - { label: Descrierea imaginii, name: imagineAlt, widget: string, required: false, hint: "Ce se vede în poză (pentru nevăzători și Google)." }
+      - label: Culoarea cardului (când nu e imagine)
+        name: accent
+        widget: select
+        default: albastru
+        options:
+          - { label: Albastru, value: albastru }
+          - { label: Roșu, value: rosu }
+      - { label: Acces, name: acces, widget: string, default: Intrarea liberă }
+      - { label: Eveniment gratuit, name: gratuit, widget: boolean, default: true }
+      - label: Link de rezervare (opțional)
+        name: linkInscriere
+        widget: string
+        required: false
+        pattern: &patternUrl ['^https?://.+', 'Linkul trebuie să înceapă cu https://']
+        hint: Dacă e nevoie de rezervare (ex. Google Form, Eventbrite).
+      - { label: Text complet, name: body, widget: markdown }
+      - label: Galerie foto (după eveniment)
+        name: galerie
+        widget: list
+        required: false
+        summary: "{{fields.descriere}}"
+        fields:
+          - { label: Poză, name: imagine, widget: image }
+          - { label: Descriere, name: descriere, widget: string, required: false }
+      - &ciorna
+        label: Ciornă
+        name: ciorna
+        widget: boolean
+        default: false
+        hint: Bifat = se salvează, dar NU apare pe site.
+      - &seoTitlu
+        label: Titlu pentru Google (opțional)
+        name: seoTitlu
+        widget: string
+        required: false
+        hint: Dacă îl lași gol, se folosește titlul. Ideal sub 60 de caractere.
+      - &seoDescriere
+        label: Descriere pentru Google (opțional)
+        name: seoDescriere
+        widget: text
+        required: false
+        hint: 1–2 fraze, max. 160 de caractere. Apare sub titlu în rezultatele Google.
+
+  # ======================= NOUTĂȚI =======================
+  - name: noutati
+    label: Noutăți & comunicate
+    label_singular: Articol
+    description: Articole și comunicate de presă. Cele mai noi apar primele.
+    icon: newspaper
+    folder: src/content/noutati
+    create: true
+    slug: "{{titlu}}"
+    identifier_field: titlu
+    summary: "{{data}} — {{titlu}}"
+    sortable_fields:
+      fields: [data, titlu]
+      default: { field: data, direction: descending }
+    media_folder: /src/assets/uploads/noutati
+    public_folder: ../../assets/uploads/noutati
+    preview_path: noutati/{{slug}}/
+    fields:
+      - { label: Titlu, name: titlu, widget: string }
+      - label: Data publicării
+        name: data
+        widget: datetime
+        time_format: false
+        format: YYYY-MM-DD
+        default: "{{now}}"
+      - label: Tip
+        name: tip
+        widget: select
+        default: articol
+        options:
+          - { label: Articol, value: articol }
+          - { label: Comunicat de presă, value: comunicat }
+      - { label: Rezumat, name: rezumat, widget: text, hint: "1–2 fraze. Apare pe card și în Google." }
+      - { label: Text complet, name: body, widget: markdown }
+      - label: Fișier atașat (opțional)
+        name: fisier
+        widget: file
+        required: false
+        media_folder: /public/presa
+        public_folder: /presa
+        hint: De exemplu comunicatul în PDF.
+      - label: Imagine pentru distribuire (opțional)
+        name: imagineOG
+        widget: image
+        required: false
+        hint: Apare când linkul e distribuit pe Facebook/WhatsApp. Fără ea se folosește logo-ul CBT.
+      - *ciorna
+      - *seoTitlu
+      - *seoDescriere
+
+  # ======================= PROIECTE =======================
+  - name: proiecte
+    label: Proiecte
+    label_singular: Proiect
+    icon: volunteer_activism
+    folder: src/content/proiecte
+    create: true
+    slug: "{{titlu}}"
+    identifier_field: titlu
+    summary: "{{an}} — {{titlu}}"
+    sortable_fields:
+      fields: [an, titlu]
+      default: { field: an, direction: descending }
+    fields:
+      - { label: Titlu, name: titlu, widget: string }
+      - { label: Anul, name: an, widget: number, value_type: int }
+      - label: Stare
+        name: stare
+        widget: select
+        options:
+          - { label: Trecut, value: trecut }
+          - { label: În desfășurare, value: in-desfasurare }
+          - { label: Viitor, value: viitor }
+      - { label: Descriere, name: descriere, widget: text }
+      - { label: Link (opțional), name: link, widget: string, required: false, pattern: *patternUrl }
+      - *ciorna
+
+  # ======================= TESTIMONIALE =======================
+  - name: testimoniale
+    label: Testimoniale
+    label_singular: Testimonial
+    description: >-
+      Apar pe prima pagină DOAR dacă e bifat „Acord semnat”. Trimite persoanei linkul
+      basarabenitm.ro/acord-imagine/ și bifează după ce apare în Google Sheet (tab „Acorduri imagine”).
+    icon: format_quote
+    folder: src/content/testimoniale
+    create: true
+    slug: "{{nume}}"
+    identifier_field: nume
+    summary: "{{nume}} — {{origine}}"
+    sortable_fields:
+      fields: [ordine, nume]
+      default: { field: ordine, direction: ascending }
+    media_folder: /src/assets/uploads/testimoniale
+    public_folder: ../../assets/uploads/testimoniale
+    fields:
+      - { label: Nume, name: nume, widget: string, hint: "Nume real, ex. Maria Cojocaru sau Maria C." }
+      - { label: Traseu, name: origine, widget: string, required: false, hint: "ex. Chișinău → Timișoara" }
+      - { label: Citat, name: citat, widget: text, hint: "Scurt — max. 280 de caractere." }
+      - { label: Poză (opțional), name: poza, widget: image, required: false, hint: "Pătrată. Fără poză se afișează inițialele." }
+      - label: Culoarea inițialelor
+        name: accent
+        widget: select
+        default: albastru
+        options:
+          - { label: Albastru, value: albastru }
+          - { label: Roșu, value: rosu }
+          - { label: Galben, value: galben }
+      - { label: Ordine, name: ordine, widget: number, value_type: int, default: 10, hint: "Numărul mai mic apare primul." }
+      - label: Acord semnat
+        name: acordSemnat
+        widget: boolean
+        default: false
+        hint: Bifează DOAR după ce persoana a completat formularul de acord imagine.
+
+  # ======================= PAGINI =======================
+  - name: pagini
+    label: Pagini
+    icon: description
+    description: Textele paginilor fixe.
+    media_folder: /src/assets/uploads/pagini
+    public_folder: ../../assets/uploads/pagini
+    files:
+      - name: acasa_ro
+        label: Acasă
+        file: src/content/acasa/ro.yaml
+        fields: &campuriAcasa
+          - { label: Titlu pentru Google, name: seoTitlu, widget: string }
+          - { label: Descriere pentru Google, name: seoDescriere, widget: text }
+          - { label: "Hero — titlu mare", name: heroTitlu, widget: string }
+          - { label: "Hero — text", name: heroText, widget: text }
+          - { label: "Beneficii — etichetă mică", name: beneficiiEticheta, widget: string }
+          - { label: "Beneficii — titlu", name: beneficiiTitlu, widget: string }
+          - { label: "Beneficii — text introductiv", name: beneficiiText, widget: text, required: false }
+          - label: Beneficii (3–4 casete)
+            name: beneficii
+            widget: list
+            min: 1
+            max: 4
+            summary: "{{fields.titlu}}"
+            fields:
+              - { label: Titlu, name: titlu, widget: string }
+              - { label: Text, name: text, widget: text }
+              - &culoare
+                label: Culoare pătrat
+                name: culoare
+                widget: select
+                default: albastru
+                options:
+                  - { label: Albastru, value: albastru }
+                  - { label: Galben, value: galben }
+                  - { label: Roșu, value: rosu }
+              - label: Rezervat (contur punctat, text gri)
+                name: rezervat
+                widget: boolean
+                default: false
+                hint: Pentru beneficiile încă nedefinite.
+          - { label: "Evenimente — titlu secțiune", name: evenimenteTitlu, widget: string }
+          - { label: "Testimoniale — etichetă mică", name: testimonialeEticheta, widget: string }
+          - { label: "Testimoniale — titlu", name: testimonialeTitlu, widget: string }
+          - { label: "CTA final — titlu", name: ctaTitlu, widget: string }
+          - { label: "CTA final — text", name: ctaText, widget: text }
+
+      - name: despre_ro
+        label: Cine suntem
+        file: src/content/despre/ro.md
+        fields: &campuriDespre
+          - { label: Titlu pentru Google, name: seoTitlu, widget: string }
+          - { label: Descriere pentru Google, name: seoDescriere, widget: text }
+          - { label: Etichetă mică, name: eticheta, widget: string }
+          - { label: Titlu, name: titlu, widget: string }
+          - { label: Introducere (text mare), name: intro, widget: text }
+          - { label: Istoria comunității, name: body, widget: markdown }
+          - { label: Poză (echipa / un eveniment), name: poza, widget: image, required: false }
+          - { label: Descrierea pozei, name: pozaAlt, widget: string, required: false }
+          - label: Valori (coloanele de jos)
+            name: valori
+            widget: list
+            required: false
+            summary: "{{fields.titlu}}"
+            fields:
+              - { label: Titlu, name: titlu, widget: string }
+              - { label: Text, name: text, widget: text }
+              - *culoare
+
+      - name: confidentialitate
+        label: Politica de confidențialitate
+        file: src/content/legal/confidentialitate.md
+        fields: &campuriLegal
+          - { label: Titlu, name: titlu, widget: string }
+          - { label: Descriere pentru Google, name: descriere, widget: text }
+          - { label: Actualizat la, name: actualizat, widget: datetime, time_format: false, format: YYYY-MM-DD }
+          - { label: Text, name: body, widget: markdown }
+
+      - name: cookie
+        label: Politica de cookie-uri
+        file: src/content/legal/cookie.md
+        fields: *campuriLegal
+
+  # ======================= VERSIUNEA RUSĂ =======================
+  - name: pagini_ru
+    label: Versiunea rusă (RU)
+    icon: translate
+    description: >-
+      Traducerea UMANĂ a paginilor Acasă și Cine suntem. Cât timp traducerea nu e bifată ca gata
+      în „Stare traducere”, /ru/ arată textul românesc cu o bandă „în pregătire” și nu apare în Google.
+    media_folder: /src/assets/uploads/pagini
+    public_folder: ../../assets/uploads/pagini
+    files:
+      - name: stare
+        label: Stare traducere
+        file: src/content/setari/traduceri.yaml
+        fields:
+          - { label: "Acasă (RU) e tradusă și verificată", name: acasa, widget: boolean, default: false }
+          - { label: "Cine suntem (RU) e tradusă și verificată", name: despre, widget: boolean, default: false }
+      - name: acasa_ru
+        label: Acasă (RU)
+        file: src/content/acasa/ru.yaml
+        fields: *campuriAcasa
+      - name: despre_ru
+        label: Cine suntem (RU)
+        file: src/content/despre/ru.md
+        fields: *campuriDespre
+
+  # ======================= SETĂRI =======================
+  - name: setari
+    label: Setări site
+    icon: settings
+    files:
+      - name: general
+        label: Contact, rețele sociale, cifre
+        file: src/content/setari/general.yaml
+        fields:
+          - { label: Numele organizației, name: numeOrganizatie, widget: string }
+          - { label: Descriere scurtă (subsol), name: descriereScurta, widget: string }
+          - { label: Email de contact, name: email, widget: string }
+          - { label: Telefon, name: telefon, widget: string, required: false }
+          - { label: Adresa sediului, name: adresa, widget: string, required: false }
+          - { label: Pagina de Facebook, name: facebook, widget: string, required: false, pattern: *patternUrl }
+          - { label: Instagram, name: instagram, widget: string, required: false, pattern: *patternUrl }
+          - { label: Grupul de Facebook, name: grupFacebook, widget: string, required: false, pattern: *patternUrl }
+          - label: Cifre pe prima pagină
+            name: statistici
+            widget: list
+            max: 4
+            summary: "{{fields.valoare}} {{fields.eticheta}}"
+            fields:
+              - { label: Cifra, name: valoare, widget: string, hint: "ex. 248" }
+              - { label: Eticheta, name: eticheta, widget: string, hint: "ex. membri activi" }
+          - label: Pasul următor după înscriere
+            name: pasulUrmator
+            widget: object
+            hint: Ce vede omul imediat după ce s-a înscris (pagina de mulțumire).
+            fields:
+              - { label: "Pasul (după „Pasul următor:”)", name: titlu, widget: string }
+              - { label: Explicație, name: text, widget: text }
+              - { label: Textul butonului, name: buton, widget: string }
+              - { label: Link buton, name: link, widget: string, pattern: *patternUrl }
+
+      - name: presa
+        label: Press kit
+        file: src/content/presa/kit.yaml
+        fields:
+          - { label: Text introductiv, name: intro, widget: string }
+          - label: Fișiere
+            name: fisiere
+            widget: list
+            summary: "{{fields.titlu}}"
+            fields:
+              - { label: Titlu, name: titlu, widget: string, hint: "ex. Poze de arhivă high-res" }
+              - label: Fișier
+                name: fisier
+                widget: file
+                media_folder: /public/presa
+                public_folder: /presa
+                hint: ZIP, PDF, JPG. Mărimea se calculează automat.
+              - label: Tip
+                name: tip
+                widget: select
+                default: document
+                options:
+                  - { label: Logo, value: logo }
+                  - { label: Fotografii, value: foto }
+                  - { label: Document, value: document }

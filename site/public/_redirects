@@ -1,0 +1,12 @@
+# Redirecționări — https://developers.cloudflare.com/pages/configuration/redirects/
+# Adrese scurte, ușor de dat pe afișe și în mesaje.
+/inscriere      /contact/            301
+/inscriere/     /contact/            301
+/devino-membru  /contact/            301
+/devino-membru/ /contact/            301
+/cine-suntem    /despre/             301
+/cine-suntem/   /despre/             301
+/presa          /noutati/#press-kit  301
+/presa/         /noutati/#press-kit  301
+/acord          /acord-imagine/      301
+/acord/         /acord-imagine/      301

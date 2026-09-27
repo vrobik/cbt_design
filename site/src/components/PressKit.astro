@@ -1,0 +1,138 @@
+---
+/**
+ * Press kit — fișiere descărcabile direct (logo-uri, poze de arhivă, comunicate).
+ * Lista se editează din CMS → „Press kit”. Mărimea fișierelor se calculează automat.
+ */
+import { statSync } from 'node:fs';
+import { join } from 'node:path';
+import { Image } from 'astro:assets';
+import mark from '../assets/brand/mark-color.png';
+import Button from './Button.astro';
+import { pressKit } from '../lib/content';
+
+const kit = await pressKit();
+
+function marime(cale: string): string | undefined {
+  try {
+    const b = statSync(join(process.cwd(), 'public', cale)).size;
+    if (b >= 1024 * 1024) return `${(b / 1024 / 1024).toFixed(1)} MB`;
+    return `${Math.max(1, Math.round(b / 1024))} KB`;
+  } catch {
+    return undefined;
+  }
+}
+
+const fisiere = kit.fisiere.map((f) => ({
+  ...f,
+  ext: (f.fisier.split('.').pop() ?? '').toUpperCase(),
+  marime: /^https?:/.test(f.fisier) ? undefined : marime(f.fisier),
+}));
+---
+
+<section class="kit" id="press-kit" aria-labelledby="press-kit-titlu">
+  <h2 id="press-kit-titlu" class="title">Press kit</h2>
+  <p class="intro">{kit.intro}</p>
+  {
+    fisiere.length > 0 ? (
+      <ul class="rows">
+        {fisiere.map((f) => (
+          <li class="row">
+            {f.tip === 'logo' ? (
+              <Image src={mark} alt="" height={40} densities={[1, 2]} class="ico-img" />
+            ) : f.tip === 'foto' ? (
+              <span class="ico ico--foto" aria-hidden="true" />
+            ) : (
+              <span class="ico ico--doc" aria-hidden="true">{f.ext.slice(0, 4)}</span>
+            )}
+            <div class="meta">
+              <b>{f.titlu}</b>
+              <span class="size">
+                {f.ext}
+                {f.marime && ` · ${f.marime}`}
+              </span>
+            </div>
+            <Button size="sm" variant="secondary" href={f.fisier} download>
+              Descarcă
+            </Button>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="intro">Materialele de presă vor fi disponibile în curând.</p>
+    )
+  }
+</section>
+
+<style>
+  .kit {
+    background: var(--cbt-gri-10);
+    border-radius: var(--radius-lg);
+    padding: 40px clamp(20px, 4vw, 32px);
+    margin-top: 56px;
+  }
+  .title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-extra);
+    letter-spacing: var(--ls-heading);
+    margin: 0 0 6px;
+  }
+  .intro {
+    color: var(--cbt-gri-60);
+    font-size: var(--fs-small);
+    margin: 0 0 var(--sp-4);
+    line-height: 1.55;
+  }
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    background: var(--cbt-alb);
+    border: 1px solid var(--cbt-gri-10);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+  }
+  .ico-img {
+    height: 40px;
+    width: auto;
+    display: block;
+    flex: none;
+  }
+  .ico {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: var(--radius-sm);
+  }
+  .ico--foto {
+    background: linear-gradient(135deg, var(--cbt-albastru), var(--cbt-albastru-inchis));
+  }
+  .ico--doc {
+    background: var(--cbt-gri-10);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    color: var(--cbt-gri-60);
+  }
+  .meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .meta b {
+    display: block;
+    font-size: var(--fs-small);
+  }
+  .size {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    color: var(--cbt-gri-60);
+  }
+</style>

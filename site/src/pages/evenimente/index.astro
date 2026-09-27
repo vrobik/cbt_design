@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import EventCard from '../../components/EventCard.astro';
+import Mosaic from '../../components/Mosaic.astro';
+import ShowMore from '../../components/ShowMore.astro';
+import { evenimente, setari } from '../../lib/content';
+
+const { viitoare, trecute } = await evenimente();
+const s = await setari();
+---
+
+<BaseLayout
+  title="Evenimente"
+  description="Evenimentele Comunității Basarabenilor din Timișoara: sărbători de acasă, întâlniri, ateliere și seri de colinde. Fiecare eveniment are pagină proprie cu detalii și locație."
+>
+  <div class="page page--wide">
+    <div class="container">
+      <Eyebrow>Evenimente</Eyebrow>
+      <h1 class="h1">Ce se întâmplă la CBT</h1>
+      <p class="intro">Fiecare eveniment are pagină proprie cu detalii, locație și înscriere.</p>
+      <Mosaic culori={['albastru', 'albastru', 'galben', 'rosu']} class="lead-mark" />
+
+      <h2 class="h2 sub">Urmează</h2>
+      {
+        viitoare.length > 0 ? (
+          <div class="grid">
+            {viitoare.map((ev) => (
+              <EventCard ev={ev} />
+            ))}
+          </div>
+        ) : (
+          <p class="empty">
+            Momentan nu avem evenimente anunțate.
+            {s.grupFacebook && (
+              <>
+                {' '}
+                Le anunțăm întâi în <a href={s.grupFacebook}>grupul de Facebook</a>.
+              </>
+            )}
+          </p>
+        )
+      }
+
+      {
+        trecute.length > 0 && (
+          <>
+            <h2 class="h2 sub past">Au avut loc</h2>
+            <ShowMore total={trecute.length} buton="Arată mai multe evenimente">
+              {trecute.map((ev, i) => (
+                <div class:list={{ 'more-hidden': i >= 3 }}>
+                  <EventCard ev={ev} />
+                </div>
+              ))}
+            </ShowMore>
+          </>
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page :global(.lead-mark) {
+    margin: var(--sp-4) 0 var(--sp-5);
+  }
+  .sub {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--sp-4);
+  }
+  .past {
+    margin-top: var(--sp-7);
+  }
+  .empty {
+    background: var(--cbt-gri-10);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4);
+    color: var(--cbt-gri-90);
+    margin: 0;
+  }
+</style>

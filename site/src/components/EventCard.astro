@@ -1,0 +1,86 @@
+---
+/**
+ * EventCard — poarta spre pagina unui eveniment: imagine (sau gradient de brand),
+ * chip galben cu data, titlu, locație și o descriere scurtă.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Card from './Card.astro';
+import { dataIso, dataScurta } from '../lib/dates';
+
+interface Props {
+  ev: CollectionEntry<'evenimente'>;
+}
+const { ev } = Astro.props;
+const d = ev.data;
+---
+
+<Card href={`/evenimente/${ev.id}/`} flush hoverable>
+  <div class:list={['media', `media--${d.accent}`]}>
+    {
+      d.imagine && (
+        <Image
+          src={d.imagine}
+          alt={d.imagineAlt ?? ''}
+          widths={[360, 560, 720]}
+          sizes="(min-width: 1140px) 360px, (min-width: 820px) 45vw, 100vw"
+          class="img"
+        />
+      )
+    }
+    <time class="chip" datetime={dataIso(d.data)}>{dataScurta(d.data)}</time>
+  </div>
+  <div class="body">
+    <h3 class="title">{d.titlu}</h3>
+    <span class="loc">{d.locatie}</span>
+    <p class="desc">{d.descriere}</p>
+  </div>
+</Card>
+
+<style>
+  .media {
+    height: 160px;
+    position: relative;
+    background: linear-gradient(135deg, var(--cbt-albastru) 0%, var(--cbt-albastru-inchis) 100%);
+  }
+  .media--rosu {
+    background: linear-gradient(135deg, var(--cbt-rosu) 0%, var(--cbt-rosu-inchis) 100%);
+  }
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .chip {
+    position: absolute;
+    top: var(--sp-3);
+    left: var(--sp-3);
+    background: var(--cbt-galben);
+    color: var(--cbt-negru);
+    font-family: var(--font-mono);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-label);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+  }
+  .body {
+    padding: var(--sp-4);
+  }
+  .title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-bold);
+    margin: 0;
+  }
+  .loc {
+    font-size: var(--fs-label);
+    color: var(--cbt-gri-60);
+    font-family: var(--font-mono);
+  }
+  .desc {
+    margin: var(--sp-2) 0 0;
+    color: var(--cbt-gri-60);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+</style>

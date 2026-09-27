@@ -1,0 +1,285 @@
+---
+/**
+ * Prima pagină (folosită de / și /ru/). Textele vin din CMS → „Pagini → Acasă”.
+ * Ordinea secțiunilor e cea din brief: hero cu CTA → beneficii → cifre →
+ * evenimente → testimoniale → CTA final.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../Button.astro';
+import Card from '../Card.astro';
+import Eyebrow from '../Eyebrow.astro';
+import EventCard from '../EventCard.astro';
+import Mosaic from '../Mosaic.astro';
+import StatsBand from '../StatsBand.astro';
+import TestimonialCarousel from '../TestimonialCarousel.astro';
+import logo from '../../assets/brand/logo-color.png';
+import { evenimente, setari, testimoniale } from '../../lib/content';
+import { organizatie } from '../../lib/seo';
+import { t, type Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const ro = await getEntry('acasa', 'ro');
+const ru = await getEntry('acasa', 'ru');
+if (!ro) throw new Error('Lipsește src/content/acasa/ro.yaml');
+const ruTradus = !!(await getEntry('traduceri', 'traduceri'))?.data.acasa;
+const c = lang === 'ru' && ruTradus && ru ? ru.data : ro.data;
+const ruInPregatire = lang === 'ru' && !ruTradus;
+// Cât timp traducerea nu e gata, toată interfața rămâne în română (doar comutatorul arată RU).
+const ui: Lang = lang === 'ru' && ruTradus ? 'ru' : 'ro';
+const tr = t(ui);
+
+const s = await setari();
+const { viitoare, trecute } = await evenimente();
+const avemViitoare = viitoare.length > 0;
+const deAfisat = (avemViitoare ? viitoare : trecute).slice(0, 3);
+const testi = await testimoniale();
+const an = new Date().getFullYear();
+
+// Mozaicul decorativ din hero (6×4), exact ca în design.
+const mozaic = ['b.yy.r', '.b.yr.', 'bby.rr', '.b.r.r'].join('');
+const culoare = { b: 'albastru', y: 'galben', r: 'rosu' } as const;
+---
+
+<BaseLayout
+  title={c.seoTitlu}
+  description={c.seoDescriere}
+  lang={ui}
+  comutator={lang}
+  ruInPregatire={ruInPregatire}
+  noindex={ruInPregatire}
+  alternate={ruTradus ? { ro: '/', ru: '/ru/' } : undefined}
+  jsonLd={organizatie(s, Astro.site, logo.src)}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <Mosaic size={16} class="hero-mosaic-mark" />
+      <h1 class="hero-title">{c.heroTitlu}</h1>
+      <p class="hero-text">{c.heroText}</p>
+      <div class="hero-actions">
+        <Button size="lg" href="/contact/" data-track="click_inscriere" data-track-locatie="hero">
+          {tr('cta.lung')}
+        </Button>
+        <Button size="lg" variant="onDark" href="/contact/#scrie-ne">{tr('cta.scrie')}</Button>
+      </div>
+    </div>
+    <div class="hero-grid" aria-hidden="true">
+      {[...mozaic].map((ch) => <span style={ch === '.' ? undefined : `background:var(--cbt-${culoare[ch as 'b']})`} />)}
+    </div>
+  </section>
+
+  <!-- Beneficii -->
+  <section class="section">
+    <div class="container">
+      <Eyebrow>{c.beneficiiEticheta}</Eyebrow>
+      <h2 class="h2">{c.beneficiiTitlu}</h2>
+      {c.beneficiiText && <p class="intro mb">{c.beneficiiText}</p>}
+      <div class="grid" style="--min:240px">
+        {
+          c.beneficii.map((b) => (
+            <Card rezervat={b.rezervat}>
+              <div class="benefit-icon">
+                <span style={`background:var(--cbt-${b.culoare})`} />
+              </div>
+              <h3 class:list={['h3', { muted: b.rezervat }]}>{b.titlu}</h3>
+              <p class="small muted">{b.text}</p>
+            </Card>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Cifre -->
+  {
+    s.statistici.length > 0 && (
+      <section class="section section--alt">
+        <div class="container">
+          <StatsBand stats={s.statistici} />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Evenimente -->
+  {
+    deAfisat.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <Eyebrow>
+            {tr('nav.evenimente')} · {an}
+          </Eyebrow>
+          <div class="row-head">
+            <h2 class="h2">{avemViitoare ? c.evenimenteTitlu : 'Evenimente recente'}</h2>
+            <a href="/evenimente/" class="all">
+              Toate evenimentele →
+            </a>
+          </div>
+          <div class="grid">
+            {deAfisat.map((ev) => <EventCard ev={ev} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Testimoniale -->
+  {
+    testi.length > 0 && (
+      <section class="section section--alt">
+        <div class="container">
+          <TestimonialCarousel items={testi} eticheta={c.testimonialeEticheta} titlu={c.testimonialeTitlu} />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- CTA final -->
+  <section class="cta">
+    <div class="cta-inner">
+      <h2 class="cta-title">{c.ctaTitlu}</h2>
+      <p class="cta-text">{c.ctaText}</p>
+      <Button size="lg" href="/contact/" data-track="click_inscriere" data-track-locatie="cta_final">
+        {tr('cta.lung')}
+      </Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: var(--cbt-negru);
+    color: var(--cbt-alb);
+    padding: clamp(56px, 10vw, 96px) clamp(20px, 5vw, 32px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .hero :global(.hero-mosaic-mark) {
+    margin-bottom: var(--sp-4);
+  }
+  .hero-title {
+    color: var(--cbt-alb);
+    font-size: var(--fs-display);
+    font-weight: var(--fw-black);
+    letter-spacing: var(--ls-display);
+    line-height: var(--lh-tight);
+    max-width: 16ch;
+    margin: 0;
+  }
+  .hero-text {
+    color: var(--cbt-gri-30);
+    margin: var(--sp-3) 0 0;
+    max-width: 52ch;
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-top: var(--sp-5);
+  }
+  .hero-grid {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    grid-template-columns: repeat(6, 26px);
+    gap: 5px;
+    opacity: 0.9;
+  }
+  .hero-grid span {
+    width: 26px;
+    height: 26px;
+    display: block;
+  }
+  @media (min-width: 820px) {
+    .hero-grid {
+      display: grid;
+    }
+  }
+  @media (min-width: 820px) and (max-width: 1100px) {
+    .hero-grid {
+      opacity: 0.35;
+    }
+  }
+
+  .mb {
+    margin-bottom: var(--sp-5);
+  }
+  .h2 + .grid {
+    margin-top: var(--sp-5);
+  }
+  .benefit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    background: var(--cbt-albastru-10);
+    margin-bottom: 12px;
+  }
+  .benefit-icon span {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
+  .small {
+    font-size: var(--fs-small);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .row-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-2) var(--sp-3);
+    margin-bottom: var(--sp-4);
+  }
+  .row-head .h2 {
+    margin: 0;
+  }
+  .all {
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+  }
+
+  .cta {
+    background: var(--cbt-albastru);
+    color: var(--cbt-alb);
+    padding: 80px clamp(20px, 5vw, 32px);
+    text-align: center;
+  }
+  .cta-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .cta-title {
+    color: var(--cbt-alb);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-extra);
+    letter-spacing: var(--ls-heading);
+    margin: 0 0 var(--sp-3);
+  }
+  .cta-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: var(--fs-body-lg);
+    margin: 0 0 28px;
+    line-height: var(--lh-body);
+  }
+</style>

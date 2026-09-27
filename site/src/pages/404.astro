@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import Mosaic from '../components/Mosaic.astro';
+---
+
+<BaseLayout title="Pagina nu există" description="Pagina căutată nu există pe basarabenitm.ro." noindex>
+  <div class="page page--narrow nf">
+    <Mosaic culori={['albastru', 'galben', 'rosu', 'albastru']} size={16} class="mk" />
+    <p class="code">404</p>
+    <h1 class="h1">Pagina asta s-a rătăcit — ca un basarabean fără GPS în Timișoara.</h1>
+    <p class="muted">Poate a fost mutată sau linkul are o greșeală. Hai înapoi acasă.</p>
+    <div class="actions">
+      <Button variant="dark" href="/">Înapoi la Acasă</Button>
+      <Button variant="secondary" href="/evenimente/">Vezi evenimentele</Button>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding-top: var(--sp-8);
+    padding-bottom: var(--sp-8);
+  }
+  .nf :global(.mk) {
+    margin-bottom: var(--sp-3);
+  }
+  .code {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-semibold);
+    font-size: clamp(3rem, 12vw, 5rem);
+    line-height: 1;
+    color: var(--cbt-albastru);
+    margin: 0 0 var(--sp-3);
+  }
+  .muted {
+    margin: 0 0 var(--sp-5);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+</style>

@@ -1,0 +1,101 @@
+---
+/**
+ * Button — ierarhia de acțiuni CBT. Mereu pilulă, minim 48px înălțime (touch target).
+ * `primary` (galben) e rezervat pentru acțiunea principală — „Înscrie-te în comunitate”.
+ * `secondary` = contur discret; `dark` (albastru) = acțiuni terțiare pe pagini interioare.
+ * `onDark` = varianta secundară pe fundal negru (hero).
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = {
+  variant?: 'primary' | 'secondary' | 'dark' | 'onDark';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  full?: boolean;
+  class?: string;
+} & Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'class'>;
+
+const { variant = 'primary', size = 'md', href, full = false, class: cls, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, full && 'btn--full', cls];
+---
+
+<Tag href={href} class:list={classes} {...rest}><slot /></Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    font-family: var(--font-text);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    text-align: center;
+    line-height: 1.2;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition:
+      transform var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease),
+      background var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn--sm { padding: 10px 20px; font-size: var(--fs-small); min-height: 40px; }
+  .btn--md { padding: 14px 30px; font-size: var(--fs-body); min-height: 48px; }
+  .btn--lg { padding: 18px 36px; font-size: var(--fs-body-lg); min-height: 48px; }
+  .btn--full { width: 100%; }
+
+  .btn--primary {
+    background: var(--cbt-galben);
+    color: var(--cbt-negru);
+    box-shadow: var(--shadow-action);
+  }
+  .btn--primary:hover {
+    background: var(--color-action-hover);
+    color: var(--cbt-negru);
+    box-shadow: var(--shadow-action-hover);
+    transform: translateY(-1px);
+  }
+
+  .btn--secondary {
+    background: transparent;
+    color: var(--cbt-negru);
+    border-color: var(--cbt-gri-30);
+  }
+  .btn--secondary:hover {
+    border-color: var(--cbt-negru);
+    color: var(--cbt-negru);
+  }
+
+  .btn--onDark {
+    background: transparent;
+    color: var(--cbt-alb);
+    border-color: var(--cbt-gri-60);
+  }
+  .btn--onDark:hover {
+    border-color: var(--cbt-alb);
+    color: var(--cbt-alb);
+  }
+
+  .btn--dark {
+    background: var(--cbt-albastru);
+    color: var(--cbt-alb);
+    box-shadow: 0 2px 10px rgba(47, 68, 138, 0.25);
+  }
+  .btn--dark:hover {
+    background: var(--cbt-albastru-inchis);
+    color: var(--cbt-alb);
+    transform: translateY(-1px);
+  }
+</style>

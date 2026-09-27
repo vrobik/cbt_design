@@ -1,0 +1,31 @@
+---
+/**
+ * Formularul de acord pentru utilizarea imaginii (cerință din brief, secțiunea 2).
+ * Linkul se trimite persoanelor din testimoniale / galerii înainte de publicare.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import ImageConsentForm from '../../components/forms/ImageConsentForm.svelte';
+---
+
+<BaseLayout
+  title="Acord de utilizare a imaginii"
+  description="Formular prin care îți dai acordul ca CBT să folosească fotografii sau testimoniale cu tine pe site și pe rețelele sociale."
+>
+  <div class="page page--narrow">
+    <Eyebrow>Acord imagine</Eyebrow>
+    <h1 class="h1">Acord de utilizare a imaginii</h1>
+    <p class="muted sub">
+      Pentru a publica fotografii sau testimoniale în care apari, avem nevoie de acordul tău scris. Durează un
+      minut. Poți retrage acordul oricând, printr-un email — iar noi scoatem imaginile de pe site.
+    </p>
+    <ImageConsentForm client:load />
+  </div>
+</BaseLayout>
+
+<style>
+  .sub {
+    margin: 0 0 var(--sp-5);
+    line-height: var(--lh-body);
+  }
+</style>
