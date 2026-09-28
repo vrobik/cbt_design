@@ -1,7 +1,0 @@
-# Copiază în .dev.vars pentru a testa funcțiile local cu:  npm run dev:functii
-# (.dev.vars NU se urcă în git)
-SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/XXXXXXXX/exec
-SHEETS_WEBHOOK_SECRET=o-parola-lunga-aleatoare
-# TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA   # cheie de test Cloudflare (trece mereu)
-# GITHUB_CLIENT_ID=
-# GITHUB_CLIENT_SECRET=
